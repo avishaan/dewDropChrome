@@ -27,8 +27,8 @@
   "content_scripts": [
     {
       "matches": [
-        "http://www.facebook.com/*",
-        "https://www.facebook.com/*"
+        "http://www.reddit.com/*",
+        "https://www.reddit.com/*"
       ],
       "css": [
         "src/context/context.css",
@@ -39,7 +39,7 @@
     {
       "matches": [
         "http://www.facebook.com/*",
-        "https://www.facebook.com/*"
+        "http://www.reddit.com/*"
       ],
       "js": [
         "js/jquery/jquery.js",
