@@ -34,13 +34,6 @@ var dewDrop = {
       }
     });
   },
-  menuClicked: function(context){
-    //once the menu is clicked...
-    //set out network
-    this.setNetwork();
-    //render our interface to the user
-    this.render();
-  },
   render: function(context){
     //get the userid data
     this.getUserId(context);
@@ -152,7 +145,8 @@ var dewDrop = {
     })
     .done(function(data){
       //get only the list of usernames as this tells us who we currently trust
-      dewDrop.user.supports = _.pluck(data, 'name');
+      //we don't care about false because we assume we trust no one unless we explicit
+      dewDrop.user.supports = _.pluck(_.where(data, {trust: true}), 'name');
       //now that we have the databack from the user, store it in local storage for easy-ish access
       localStorage.user = {};
       localStorage.user.supports = [];
