@@ -16,7 +16,7 @@ var dewDrop = {
     this.getTemplate();
     this.listenEvents();
     //get the facebookid of the extension user
-    this.user.ownId = this.getMyId();
+    this.author.user = this.getAuthor();
     //this.modal();
   },
   listenEvents: function(){
@@ -96,22 +96,22 @@ var dewDrop = {
     this.user.personInQuestion.name = context.selectionText;
     return context.selectionText;
   },
-  getMyId: function(){
+  getAuthor: function(){
     //function gets the id of the logged in user
     return $('.user').find('a').text();
   },
   trustUser: function(event){
-    this.user.supports = _.union(this.user.supports, this.user.personInQuestion.facebookId);
+    this.author.trusts = _.union(this.author.trusts, this.user.personInQuestion.facebookId);
     //save the id as trusted (testing)
     this.saveUserDetails({content: "trust"});
   },
   distrustUser: function(event){
-    this.user.supports = _.without(this.user.supports, this.user.personInQuestion.facebookId);
+    this.author.trusts = _.without(this.author.trusts, this.user.personInQuestion.facebookId);
     this.saveUserDetails({content: "distrust"});
   },
   checkTrust: function(userId){
     //go through our list of users we support and see if there is a match
-    return _.contains(this.user.supports, this.user.personInQuestion.facebookId);
+    return _.contains(this.author.trusts, this.user.personInQuestion.facebookId);
   },
   saveUserDetails: function(options){
     //save the user details to the server
@@ -122,7 +122,7 @@ var dewDrop = {
       dataType: "json",
       async: true,
       data: JSON.stringify({
-        "author_name" : dewDrop.user.ownId.toString(),
+        "author_name" : dewDrop.author.user.toString(),
         "author_network" : dewDrop.network,
         "subject_name" : dewDrop.user.personInQuestion.facebookId,
         "subject_network" : dewDrop.network,
@@ -136,21 +136,22 @@ var dewDrop = {
       }
     });
     //save the user details in local storage so we only have to go to the server once
-    localStorage.user = JSON.stringify(this.user);
+    //TODO do we need this considering we are saving to local at the same time
+    localStorage.user = JSON.stringify(this.author.trusts);
   },
   getUserDetails: function(){
     //get the user details from the server of everyone you trust from the server
-    var trustXHR = $.getJSON("http://dewdrop.neyer.me/trust/statements-by-user/" + this.network + "/" + this.getMyId(), function(){
+    var trustXHR = $.getJSON("http://dewdrop.neyer.me/trust/statements-by-user/" + this.network + "/" + this.getAuthor(), function(){
 
     })
     .done(function(data){
       //get only the list of usernames as this tells us who we currently trust
       //we don't care about false because we assume we trust no one unless we explicit
-      dewDrop.user.supports = _.pluck(_.where(data, {trust: true}), 'name');
+      dewDrop.author.trusts = _.pluck(_.where(data, {trust: true}), 'name');
       //now that we have the databack from the user, store it in local storage for easy-ish access
-      localStorage.user = {};
-      localStorage.user.supports = [];
-      localStorage.user.supports = JSON.stringify(dewDrop.user.supports);
+      localStorage.author = {};
+      localStorage.author.trusts = [];
+      localStorage.author.trusts = JSON.stringify(dewDrop.author.trusts);
     });
   }
 };
