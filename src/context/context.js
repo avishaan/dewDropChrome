@@ -114,9 +114,9 @@ var dewDrop = {
       async: true,
       data: JSON.stringify({
         "author_name" : dewDrop.user.ownId.toString(),
-        "author_network" : "facebook",
+        "author_network" : "reddit",
         "subject_name" : dewDrop.user.personInQuestion.facebookId,
-        "subject_network" : "facebook",
+        "subject_network" : "reddit",
         "content" : options.content
       }),
       success: function(data){
@@ -131,31 +131,13 @@ var dewDrop = {
   },
   getUserDetails: function(){
     //get the user details from the server of everyone you trust from the server
-    //mockup the data for now
-    //try to get data from remote server
-    //TODO, insert api hook here
-    var distrustXHR = $.getJSON("http://dewdrop.neyer.me/api/v1/statement/?format=json&author__name=" + this.getMyId() + "&author__network__name=facebook&content=distrust&subject__network__name=reddit", function(){
+    var trustXHR = $.getJSON("http://dewdrop.neyer.me/trust/statements-by-user/reddit/" + this.getMyId(), function(){
 
     })
     .done(function(data){
-      dewDrop.user.distrusts = _.uniq(data.objects, false, function(statement, index, statements){
-        //return only the unique subjects since this user will be the author of everything
-        return statement.subject.name;
-      });
-      //now that we have the databack from the user, store it in local storage for easy-ish access
-      localStorage.user = {};
-      localStorage.user.distrusts = [];
-      localStorage.user.distrusts = JSON.stringify(dewDrop.user.distrusts);
-    });
-    var trustXHR = $.getJSON("http://dewdrop.neyer.me/api/v1/statement/?format=json&author__name=" + this.getMyId() + "&author__network__name=facebook&content=trust&subject__network__name=reddit", function(){
-
-    })
-    .done(function(data){
-      var sorted = _.sortBy(data.objects, function(statement){return 0-statement.timestamp;});
-      dewDrop.user.supports = _.uniq(sorted, false, function(statement, index, statements){
-        //return only the unique subjects since this user will be the author of everything
-        return statement.subject.name;
-      });
+      debugger;
+      //get only the list of usernames as this tells us who we currently trust
+      dewDrop.user.supports = _.pluck(data, 'name');
       //now that we have the databack from the user, store it in local storage for easy-ish access
       localStorage.user = {};
       localStorage.user.supports = [];
