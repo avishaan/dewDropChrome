@@ -135,7 +135,6 @@ var dewDrop = {
 
     })
     .done(function(data){
-      debugger;
       //get only the list of usernames as this tells us who we currently trust
       dewDrop.user.supports = _.pluck(data, 'name');
       //now that we have the databack from the user, store it in local storage for easy-ish access
