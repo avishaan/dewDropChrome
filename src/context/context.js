@@ -157,7 +157,6 @@ var dewDrop = {
         //return only the unique subjects since this user will be the author of everything
         return statement.subject.name;
       });
-      debugger;
       //now that we have the databack from the user, store it in local storage for easy-ish access
       localStorage.user = {};
       localStorage.user.supports = [];
