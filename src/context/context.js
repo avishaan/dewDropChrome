@@ -78,8 +78,8 @@ var dewDrop = {
   },
   getUserId: function(context){
     //function takes the clicked link and makes it into a reddit id
-    debugger;
-    this.user.personInQuestion.facebookId = $('a[href="' +context.linkUrl+'"]').attr('data-hovercard').match(new RegExp("\[0-9]+")).toString();
+    //TODO make the property name of the id clicked site agnostic
+    this.user.personInQuestion.facebookId = context.selectionText;
     return this.user.personInQuestion.facebookId;
   },
   getName: function(context){
