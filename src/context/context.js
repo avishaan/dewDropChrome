@@ -1,8 +1,11 @@
 
 var dewDrop = {
   template: {}, //keep the template here
+  network: '', //what network are we on? facebook, reddit, etc
   user:{supports:[], distrusts: [], supporters:[], personInQuestion:{}}, //whats the point of using loose type if I am doing it here ARGGG
   init: function(){
+    //set the network type based on the url
+    this.setNetwork();
     //bind functions to keep proper context
     this.trustUser = _.bind(this.trustUser, this);
     this.distrustUser = _.bind(this.distrustUser, this);
@@ -31,7 +34,8 @@ var dewDrop = {
   },
   menuClicked: function(context){
     //once the menu is clicked...
-
+    //set out network
+    this.setNetwork();
     //render our interface to the user
     this.render();
   },
@@ -66,6 +70,16 @@ var dewDrop = {
     chrome.extension.sendMessage({"event": "createMenu"}, function(response){
       console.log("creating menu " + response);
     });
+  },
+  setNetwork: function(context){
+    //figure out what network we are in
+    if (window.location.href.indexOf('reddit')){
+      this.network = 'reddit';
+    } else if (window.location.href.indexOf('facebook')){
+      this.network = 'facebook';
+    } else {
+      throw new Error("Couldn't figure out network");
+    }
   },
   getTemplate: function(){
     //keep context
@@ -114,9 +128,9 @@ var dewDrop = {
       async: true,
       data: JSON.stringify({
         "author_name" : dewDrop.user.ownId.toString(),
-        "author_network" : "reddit",
+        "author_network" : dewDrop.network,
         "subject_name" : dewDrop.user.personInQuestion.facebookId,
-        "subject_network" : "reddit",
+        "subject_network" : dewDrop.network,
         "content" : options.content
       }),
       success: function(data){
@@ -131,7 +145,7 @@ var dewDrop = {
   },
   getUserDetails: function(){
     //get the user details from the server of everyone you trust from the server
-    var trustXHR = $.getJSON("http://dewdrop.neyer.me/trust/statements-by-user/reddit/" + this.getMyId(), function(){
+    var trustXHR = $.getJSON("http://dewdrop.neyer.me/trust/statements-by-user/" + this.network + "/" + this.getMyId(), function(){
 
     })
     .done(function(data){
