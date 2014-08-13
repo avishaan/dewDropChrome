@@ -102,7 +102,6 @@ var dewDrop = {
   },
   checkTrust: function(userId){
     //go through our list of users we support and see if there is a match
-    debugger;
     return _.contains(this.user.supports, this.user.personInQuestion.facebookId);
   },
   saveUserDetails: function(options){
@@ -135,7 +134,7 @@ var dewDrop = {
     //mockup the data for now
     //try to get data from remote server
     //TODO, insert api hook here
-    var distrustXHR = $.getJSON("http://dewdrop.neyer.me/api/v1/statement/?format=json&author__name=" + this.getMyId() + "&author__network__name=facebook&content=distrust&subject__network__name=facebook", function(){
+    var distrustXHR = $.getJSON("http://dewdrop.neyer.me/api/v1/statement/?format=json&author__name=" + this.getMyId() + "&author__network__name=facebook&content=distrust&subject__network__name=reddit", function(){
 
     })
     .done(function(data){
@@ -148,7 +147,7 @@ var dewDrop = {
       localStorage.user.distrusts = [];
       localStorage.user.distrusts = JSON.stringify(dewDrop.user.distrusts);
     });
-    var trustXHR = $.getJSON("http://dewdrop.neyer.me/api/v1/statement/?format=json&author__name=" + this.getMyId() + "&author__network__name=facebook&content=trust&subject__network__name=facebook", function(){
+    var trustXHR = $.getJSON("http://dewdrop.neyer.me/api/v1/statement/?format=json&author__name=" + this.getMyId() + "&author__network__name=facebook&content=trust&subject__network__name=reddit", function(){
 
     })
     .done(function(data){
@@ -173,7 +172,7 @@ chrome.extension.sendMessage({}, function(response) {
 
     // ----------------------------------------------------------
     // This part of the script triggers when page is done loading
-    console.log("Hello. This message was sent from scripts/inject.js");
+    console.log("Hello. This message was sent from src/context/context.js");
     // ----------------------------------------------------------
     dewDrop.init();
 
