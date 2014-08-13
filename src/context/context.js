@@ -36,13 +36,13 @@ var dewDrop = {
   },
   render: function(context){
     //get the userid data
-    this.getUserId(context);
+    this.getSubject(context);
     //get the name data
     this.getName(context);
     //add element that contains the information for our modal to the body
-    $('body').append(this.template(this.user.personInQuestion));
+    $('body').append(this.template(this.subject));
     //if trust the user, remove the trust button, otherwise remove the other button
-    if (this.checkTrust(this.user.personInQuestion.facebookId)){
+    if (this.checkTrust(this.subject.user)){
       $('#dewDrop').find('#trustUser').hide();
       $('#dewDrop').find('#distrustUser').show();
     } else {
@@ -85,11 +85,11 @@ var dewDrop = {
       that.template = _.template(template);
     });
   },
-  getUserId: function(context){
+  getSubject: function(context){
     //function takes the clicked link and makes it into a reddit id
     //TODO make the property name of the id clicked site agnostic
-    this.user.personInQuestion.facebookId = context.selectionText;
-    return this.user.personInQuestion.facebookId;
+    this.subject.user = context.selectionText;
+    return this.subject.user;
   },
   getName: function(context){
     //function takes the context of the link the menu item was clicked on and returns name
@@ -101,17 +101,17 @@ var dewDrop = {
     return $('.user').find('a').text();
   },
   trustUser: function(event){
-    this.author.trusts = _.union(this.author.trusts, this.user.personInQuestion.facebookId);
+    this.author.trusts = _.union(this.author.trusts, this.subject.user);
     //save the id as trusted (testing)
     this.saveUserDetails({content: "trust"});
   },
   distrustUser: function(event){
-    this.author.trusts = _.without(this.author.trusts, this.user.personInQuestion.facebookId);
+    this.author.trusts = _.without(this.author.trusts, this.subject.user);
     this.saveUserDetails({content: "distrust"});
   },
   checkTrust: function(userId){
     //go through our list of users we support and see if there is a match
-    return _.contains(this.author.trusts, this.user.personInQuestion.facebookId);
+    return _.contains(this.author.trusts, this.subject.user);
   },
   saveUserDetails: function(options){
     //save the user details to the server
@@ -124,7 +124,7 @@ var dewDrop = {
       data: JSON.stringify({
         "author_name" : dewDrop.author.user.toString(),
         "author_network" : dewDrop.network,
-        "subject_name" : dewDrop.user.personInQuestion.facebookId,
+        "subject_name" : dewDrop.subject.user,
         "subject_network" : dewDrop.network,
         "content" : options.content
       }),
