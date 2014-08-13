@@ -3,6 +3,8 @@ var dewDrop = {
   template: {}, //keep the template here
   network: '', //what network are we on? facebook, reddit, etc
   user:{supports:[], distrusts: [], supporters:[], personInQuestion:{}}, //whats the point of using loose type if I am doing it here ARGGG
+  author: {}, //aka the user on the site
+  subject: {}, //user we will trust/distrust
   init: function(){
     //set the network type based on the url
     this.setNetwork();
@@ -20,8 +22,8 @@ var dewDrop = {
   listenEvents: function(){
     var that = this;
     //listen to future button clicks even though they haven't been inserted into the DOM yet
-    $(document).on('click', '#unsupportUser', this, this.distrustUser);
-    $(document).on('click', '#supportUser', this, this.trustUser);
+    $(document).on('click', '#distrustUser', this, this.distrustUser);
+    $(document).on('click', '#trustUser', this, this.trustUser);
     //unrender with modal is closed
     //$(document).on('click', '#closeModal', this, this.unrender);
     //listen for events from background.js
@@ -48,11 +50,11 @@ var dewDrop = {
     $('body').append(this.template(this.user.personInQuestion));
     //if trust the user, remove the trust button, otherwise remove the other button
     if (this.checkTrust(this.user.personInQuestion.facebookId)){
-      $('#dewDrop').find('#supportUser').hide();
-      $('#dewDrop').find('#unsupportUser').show();
+      $('#dewDrop').find('#trustUser').hide();
+      $('#dewDrop').find('#distrustUser').show();
     } else {
-      $('#dewDrop').find('#unsupportUser').hide();
-      $('#dewDrop').find('#supportUser').show();
+      $('#dewDrop').find('#distrustUser').hide();
+      $('#dewDrop').find('#trustUser').show();
     }
     //go ahead and trigger the dialog
     $("#dewDrop").modal({
@@ -172,6 +174,6 @@ chrome.extension.sendMessage({}, function(response) {
     dewDrop.init();
 
   }
-  }, 10);
+  }, 5);
 });
 
