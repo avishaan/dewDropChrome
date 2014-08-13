@@ -77,7 +77,8 @@ var dewDrop = {
     });
   },
   getUserId: function(context){
-    //function takes the clicked link and makes it into a facebook id
+    //function takes the clicked link and makes it into a reddit id
+    debugger;
     this.user.personInQuestion.facebookId = $('a[href="' +context.linkUrl+'"]').attr('data-hovercard').match(new RegExp("\[0-9]+")).toString();
     return this.user.personInQuestion.facebookId;
   },
@@ -88,7 +89,7 @@ var dewDrop = {
   },
   getMyId: function(){
     //function gets the id of the logged in user
-    return JSON.parse($('.fbxWelcomeBoxName').attr('data-gt')).bmid;
+    return $('.user').find('a').text();
   },
   trustUser: function(event){
     this.user.supports = _.union(this.user.supports, this.user.personInQuestion.facebookId);
