@@ -9,9 +9,9 @@ var dewDrop = {
     //set the network type based on the url
     this.setNetwork();
     //bind functions to keep proper context
-    this.trustUser = _.bind(this.trustUser, this);
-    this.distrustUser = _.bind(this.distrustUser, this);
-    this.getUserDetails();
+    this.trustAuthor = _.bind(this.trustAuthor, this);
+    this.distrustAuthor = _.bind(this.distrustAuthor, this);
+    this.getBackendData();
     this.createContexMenu();
     this.getTemplate();
     this.listenEvents();
@@ -22,8 +22,8 @@ var dewDrop = {
   listenEvents: function(){
     var that = this;
     //listen to future button clicks even though they haven't been inserted into the DOM yet
-    $(document).on('click', '#distrustUser', this, this.distrustUser);
-    $(document).on('click', '#trustUser', this, this.trustUser);
+    $(document).on('click', '#distrustUser', this, this.distrustAuthor);
+    $(document).on('click', '#trustUser', this, this.trustAuthor);
     //unrender with modal is closed
     //$(document).on('click', '#closeModal', this, this.unrender);
     //listen for events from background.js
@@ -93,27 +93,27 @@ var dewDrop = {
   },
   getName: function(context){
     //function takes the context of the link the menu item was clicked on and returns name
-    this.user.personInQuestion.name = context.selectionText;
-    return context.selectionText;
+    this.subject.name = context.selectionText;
+    return this.subject.name;
   },
   getAuthor: function(){
     //function gets the id of the logged in user
     return $('.user').find('a').text();
   },
-  trustUser: function(event){
+  trustAuthor: function(event){
     this.author.trusts = _.union(this.author.trusts, this.subject.user);
     //save the id as trusted (testing)
-    this.saveUserDetails({content: "trust"});
+    this.setBackendData({content: "trust"});
   },
-  distrustUser: function(event){
+  distrustAuthor: function(event){
     this.author.trusts = _.without(this.author.trusts, this.subject.user);
-    this.saveUserDetails({content: "distrust"});
+    this.setBackendData({content: "distrust"});
   },
   checkTrust: function(userId){
     //go through our list of users we support and see if there is a match
     return _.contains(this.author.trusts, this.subject.user);
   },
-  saveUserDetails: function(options){
+  setBackendData: function(options){
     //save the user details to the server
     $.ajax({
       type: "POST",
@@ -135,11 +135,8 @@ var dewDrop = {
 
       }
     });
-    //save the user details in local storage so we only have to go to the server once
-    //TODO do we need this considering we are saving to local at the same time
-    localStorage.user = JSON.stringify(this.author.trusts);
   },
-  getUserDetails: function(){
+  getBackendData: function(){
     //get the user details from the server of everyone you trust from the server
     var trustXHR = $.getJSON("http://dewdrop.neyer.me/trust/statements-by-user/" + this.network + "/" + this.getAuthor(), function(){
 
